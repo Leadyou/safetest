@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabase, DbSurveyResponse } from '@/lib/supabase';
+import { getSupabase, isSupabaseConfigured, DbSurveyResponse } from '@/lib/supabase';
 
 export async function GET() {
+  if (!isSupabaseConfigured) {
+    return NextResponse.json({ 
+      error: 'Supabase nie jest skonfigurowany. Ustaw NEXT_PUBLIC_SUPABASE_URL i NEXT_PUBLIC_SUPABASE_ANON_KEY.',
+      responses: [] 
+    }, { status: 503 });
+  }
+
   try {
+    const supabase = getSupabase()!;
     const { data, error } = await supabase
       .from('survey_responses')
       .select('*')
@@ -21,7 +29,14 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  if (!isSupabaseConfigured) {
+    return NextResponse.json({ 
+      error: 'Supabase nie jest skonfigurowany. Ustaw NEXT_PUBLIC_SUPABASE_URL i NEXT_PUBLIC_SUPABASE_ANON_KEY.' 
+    }, { status: 503 });
+  }
+
   try {
+    const supabase = getSupabase()!;
     const body = await request.json();
     
     const newResponse: DbSurveyResponse = {
