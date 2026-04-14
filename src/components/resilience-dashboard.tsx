@@ -128,7 +128,7 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
                   }}
                   labelStyle={{ color: "#f59e0b" }}
                   itemStyle={{ color: "#e2e8f0" }}
-                  formatter={(value: number) => [value.toFixed(2), "Średnia"]}
+                  formatter={(value) => [typeof value === "number" ? value.toFixed(2) : value, "Średnia"]}
                 />
               </RadarChart>
             </ResponsiveContainer>
