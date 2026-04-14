@@ -3,6 +3,7 @@
 export interface SurveyResponse {
   id: string;
   created_at: string;
+  municipality: string;
   communication: number;
   resources: number;
   knowledge: number;
@@ -24,9 +25,9 @@ export interface SurveyStats {
   resilienceScore: number;
 }
 
-export async function fetchSurveyResponses(): Promise<SurveyResponse[]> {
+export async function fetchSurveyResponses(municipality: string): Promise<SurveyResponse[]> {
   try {
-    const response = await fetch('/api/survey', {
+    const response = await fetch(`/api/survey?municipality=${encodeURIComponent(municipality)}`, {
       method: 'GET',
       cache: 'no-store',
     });
@@ -44,6 +45,7 @@ export async function fetchSurveyResponses(): Promise<SurveyResponse[]> {
 }
 
 export async function saveSurveyResponse(response: {
+  municipality: string;
   communication: number;
   resources: number;
   knowledge: number;

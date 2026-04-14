@@ -46,13 +46,24 @@ const shareOptions = [
   },
 ];
 
-const shareText = "Wypełnij krótką ankietę oceniającą gotowość kryzysową naszej gminy:";
+interface ShareButtonProps {
+  municipality?: string;
+}
 
-export function ShareButton() {
+export function ShareButton({ municipality }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const shareUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const shareUrl = municipality 
+    ? `${baseUrl}?gmina=${encodeURIComponent(municipality)}`
+    : baseUrl;
+  
+  const municipalityName = municipality 
+    ? municipality.charAt(0).toUpperCase() + municipality.slice(1) 
+    : "naszej gminy";
+  
+  const shareText = `Wypełnij krótką ankietę oceniającą gotowość kryzysową gminy ${municipalityName}:`;
 
   const handleShare = (option: typeof shareOptions[0]) => {
     const url = option.getUrl(shareUrl, shareText);

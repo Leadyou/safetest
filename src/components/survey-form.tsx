@@ -59,10 +59,11 @@ const defaultValues = {
 };
 
 interface SurveyFormProps {
+  municipality: string;
   onSubmit: () => void;
 }
 
-export function SurveyForm({ onSubmit }: SurveyFormProps) {
+export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
   const [values, setValues] = useState(defaultValues);
   const [status, setStatus] = useState<SubmitStatus>("idle");
 
@@ -78,6 +79,7 @@ export function SurveyForm({ onSubmit }: SurveyFormProps) {
     setStatus("submitting");
     
     const success = await saveSurveyResponse({
+      municipality,
       communication: values.communication,
       resources: values.resources,
       knowledge: values.knowledge,

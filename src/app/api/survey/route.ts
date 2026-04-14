@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabase, isSupabaseConfigured, DbSurveyResponse } from '@/lib/supabase';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   if (!isSupabaseConfigured) {
     return NextResponse.json({ 
       error: 'Supabase nie jest skonfigurowany. Ustaw NEXT_PUBLIC_SUPABASE_URL i NEXT_PUBLIC_SUPABASE_ANON_KEY.',
@@ -9,11 +9,22 @@ export async function GET() {
     }, { status: 503 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const municipality = searchParams.get('municipality');
+
+  if (!municipality) {
+    return NextResponse.json({ 
+      error: 'Brak parametru municipality',
+      responses: [] 
+    }, { status: 400 });
+  }
+
   try {
     const supabase = getSupabase()!;
     const { data, error } = await supabase
       .from('survey_responses')
       .select('*')
+      .eq('municipality', municipality.toLowerCase())
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -38,8 +49,15 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = getSupabase()!;
     const body = await request.json();
+
+    if (!body.municipality) {
+      return NextResponse.json({ 
+        error: 'Brak parametru municipality' 
+      }, { status: 400 });
+    }
     
     const newResponse: DbSurveyResponse = {
+      municipality: body.municipality.toLowerCase(),
       communication: body.communication,
       resources: body.resources,
       knowledge: body.knowledge,

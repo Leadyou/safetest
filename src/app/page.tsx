@@ -1,27 +1,51 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SurveyForm } from "@/components/survey-form";
 import { ResilienceDashboard } from "@/components/resilience-dashboard";
 import { ScenarioSimulation } from "@/components/scenario-simulation";
 import { ShareButton } from "@/components/share-button";
+import { MunicipalitySelector } from "@/components/municipality-selector";
 import { calculateStats, SurveyStats, fetchSurveyResponses } from "@/lib/survey-data";
 
 type View = "survey" | "dashboard";
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const [municipality, setMunicipality] = useState<string | null>(null);
   const [view, setView] = useState<View>("dashboard");
   const [stats, setStats] = useState<SurveyStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    
+    const urlMunicipality = searchParams.get('gmina');
+    const storedMunicipality = localStorage.getItem('selected_municipality');
+    
+    if (urlMunicipality) {
+      const normalized = urlMunicipality.toLowerCase();
+      setMunicipality(normalized);
+      localStorage.setItem('selected_municipality', normalized);
+    } else if (storedMunicipality) {
+      setMunicipality(storedMunicipality);
+    } else {
+      setLoading(false);
+    }
+  }, [searchParams]);
 
   const refreshStats = useCallback(async () => {
+    if (!municipality) return;
+    
     try {
       setLoading(true);
       setError(null);
-      const responses = await fetchSurveyResponses();
+      const responses = await fetchSurveyResponses(municipality);
       const newStats = calculateStats(responses);
       setStats(newStats);
     } catch (err) {
@@ -37,26 +61,56 @@ export default function Home() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [municipality]);
 
   useEffect(() => {
-    refreshStats();
-  }, [refreshStats]);
+    if (municipality) {
+      refreshStats();
+    }
+  }, [municipality, refreshStats]);
+
+  const handleMunicipalitySelect = (selected: string) => {
+    setMunicipality(selected);
+    window.history.replaceState({}, '', `?gmina=${encodeURIComponent(selected)}`);
+  };
+
+  const handleChangeMunicipality = () => {
+    localStorage.removeItem('selected_municipality');
+    setMunicipality(null);
+    setStats(null);
+    window.history.replaceState({}, '', '/');
+  };
 
   const handleSurveySubmit = () => {
     refreshStats();
   };
+
+  if (!mounted) {
+    return (
+      <main className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-amber-400 animate-pulse">Ładowanie...</div>
+      </main>
+    );
+  }
+
+  if (!municipality) {
+    return <MunicipalitySelector onSelect={handleMunicipalitySelect} />;
+  }
 
   if (loading) {
     return (
       <main className="min-h-screen bg-slate-950 flex items-center justify-center">
         <div className="text-center">
           <div className="text-amber-400 animate-pulse text-xl mb-2">Ładowanie danych...</div>
-          <div className="text-slate-500 text-sm">Pobieranie odpowiedzi z bazy danych</div>
+          <div className="text-slate-500 text-sm">
+            Pobieranie odpowiedzi dla gminy: <span className="text-amber-400 capitalize">{municipality}</span>
+          </div>
         </div>
       </main>
     );
   }
+
+  const displayMunicipality = municipality.charAt(0).toUpperCase() + municipality.slice(1);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
@@ -69,16 +123,23 @@ export default function Home() {
                 <h1 className="text-xl font-bold text-slate-100">
                   Panel Monitorowania Odporności
                 </h1>
-                <p className="text-sm text-slate-400">
-                  System oceny gotowości kryzysowej gminy
-                </p>
+                <div className="flex items-center gap-2 text-sm text-slate-400">
+                  <span>Gmina:</span>
+                  <span className="text-amber-400 font-medium">{displayMunicipality}</span>
+                  <button
+                    onClick={handleChangeMunicipality}
+                    className="text-xs text-slate-500 hover:text-slate-300 underline"
+                  >
+                    (zmień)
+                  </button>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap justify-center">
               <Badge variant="outline" className="border-amber-600 text-amber-400">
                 📊 {stats?.totalResponses || 0} odpowiedzi
               </Badge>
-              <ShareButton />
+              <ShareButton municipality={municipality} />
               <Button
                 variant="ghost"
                 size="sm"
@@ -123,7 +184,7 @@ export default function Home() {
 
         {view === "survey" ? (
           <div className="max-w-2xl mx-auto">
-            <SurveyForm onSubmit={handleSurveySubmit} />
+            <SurveyForm municipality={municipality} onSubmit={handleSurveySubmit} />
           </div>
         ) : (
           <div className="space-y-8">
@@ -150,5 +211,17 @@ export default function Home() {
         </div>
       </footer>
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <main className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="text-amber-400 animate-pulse">Ładowanie...</div>
+      </main>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }

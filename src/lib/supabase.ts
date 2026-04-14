@@ -22,6 +22,7 @@ export function getSupabase(): SupabaseClient | null {
 export interface DbSurveyResponse {
   id?: string;
   created_at?: string;
+  municipality: string;
   communication: number;
   resources: number;
   knowledge: number;

@@ -36,12 +36,16 @@ npm install
 CREATE TABLE survey_responses (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  municipality TEXT NOT NULL,
   communication INTEGER NOT NULL CHECK (communication >= 1 AND communication <= 5),
   resources INTEGER NOT NULL CHECK (resources >= 1 AND resources <= 5),
   knowledge INTEGER NOT NULL CHECK (knowledge >= 1 AND knowledge <= 5),
   social_capital INTEGER NOT NULL CHECK (social_capital >= 1 AND social_capital <= 5),
   competencies INTEGER NOT NULL CHECK (competencies >= 1 AND competencies <= 5)
 );
+
+-- Indeks na kolumnie municipality dla szybszego wyszukiwania
+CREATE INDEX idx_survey_municipality ON survey_responses(municipality);
 
 -- Włączenie Row Level Security
 ALTER TABLE survey_responses ENABLE ROW LEVEL SECURITY;
@@ -53,6 +57,22 @@ CREATE POLICY "Allow public read" ON survey_responses
 -- Polityka: każdy może dodawać
 CREATE POLICY "Allow public insert" ON survey_responses
   FOR INSERT WITH CHECK (true);
+```
+
+**Jeśli tabela już istnieje, dodaj kolumnę municipality:**
+
+```sql
+-- Dodanie kolumny municipality do istniejącej tabeli
+ALTER TABLE survey_responses ADD COLUMN municipality TEXT;
+
+-- Ustaw domyślną wartość dla istniejących rekordów
+UPDATE survey_responses SET municipality = 'default' WHERE municipality IS NULL;
+
+-- Ustaw kolumnę jako NOT NULL
+ALTER TABLE survey_responses ALTER COLUMN municipality SET NOT NULL;
+
+-- Dodaj indeks
+CREATE INDEX idx_survey_municipality ON survey_responses(municipality);
 ```
 
 4. Przejdź do **Settings > API** i skopiuj:
