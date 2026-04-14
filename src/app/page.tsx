@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { SurveyForm } from "@/components/survey-form";
 import { ResilienceDashboard } from "@/components/resilience-dashboard";
 import { ScenarioSimulation } from "@/components/scenario-simulation";
+import { ShareButton } from "@/components/share-button";
 import { calculateStats, SurveyStats, fetchSurveyResponses } from "@/lib/survey-data";
 
 type View = "survey" | "dashboard";
@@ -77,6 +78,7 @@ export default function Home() {
               <Badge variant="outline" className="border-amber-600 text-amber-400">
                 📊 {stats?.totalResponses || 0} odpowiedzi
               </Badge>
+              <ShareButton />
               <Button
                 variant="ghost"
                 size="sm"
