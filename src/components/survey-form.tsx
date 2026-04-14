@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { saveSurveyResponse } from "@/lib/survey-data";
 
+type SubmitStatus = "idle" | "submitting" | "success" | "error";
+
 interface Question {
   id: keyof typeof defaultValues;
   title: string;
@@ -62,7 +64,7 @@ interface SurveyFormProps {
 
 export function SurveyForm({ onSubmit }: SurveyFormProps) {
   const [values, setValues] = useState(defaultValues);
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<SubmitStatus>("idle");
 
   const handleValueChange = (questionId: keyof typeof defaultValues, value: number) => {
     setValues((prev) => ({ ...prev, [questionId]: value }));
@@ -70,10 +72,12 @@ export function SurveyForm({ onSubmit }: SurveyFormProps) {
 
   const isComplete = Object.values(values).every((v) => v > 0);
 
-  const handleSubmit = () => {
-    if (!isComplete) return;
+  const handleSubmit = async () => {
+    if (!isComplete || status === "submitting") return;
     
-    saveSurveyResponse({
+    setStatus("submitting");
+    
+    const success = await saveSurveyResponse({
       communication: values.communication,
       resources: values.resources,
       knowledge: values.knowledge,
@@ -81,27 +85,52 @@ export function SurveyForm({ onSubmit }: SurveyFormProps) {
       competencies: values.competencies,
     });
     
-    setSubmitted(true);
-    onSubmit();
+    if (success) {
+      setStatus("success");
+      onSubmit();
+    } else {
+      setStatus("error");
+    }
   };
 
-  if (submitted) {
+  if (status === "success") {
     return (
       <Card className="border-green-500/30 bg-green-950/20">
         <CardContent className="pt-6">
           <div className="text-center space-y-4">
             <div className="text-5xl">✓</div>
             <h3 className="text-xl font-semibold text-green-400">Dziękujemy za wypełnienie ankiety!</h3>
-            <p className="text-slate-400">Twoja odpowiedź została zapisana i zaktualizowała statystyki gminy.</p>
+            <p className="text-slate-400">Twoja odpowiedź została zapisana w bazie danych i zaktualizowała globalne statystyki gminy.</p>
             <Button 
               variant="outline" 
               onClick={() => {
                 setValues(defaultValues);
-                setSubmitted(false);
+                setStatus("idle");
               }}
               className="mt-4"
             >
               Wypełnij ponownie
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (status === "error") {
+    return (
+      <Card className="border-red-500/30 bg-red-950/20">
+        <CardContent className="pt-6">
+          <div className="text-center space-y-4">
+            <div className="text-5xl">✗</div>
+            <h3 className="text-xl font-semibold text-red-400">Błąd zapisu!</h3>
+            <p className="text-slate-400">Nie udało się zapisać odpowiedzi. Sprawdź połączenie i spróbuj ponownie.</p>
+            <Button 
+              variant="outline" 
+              onClick={() => setStatus("idle")}
+              className="mt-4"
+            >
+              Spróbuj ponownie
             </Button>
           </div>
         </CardContent>
@@ -155,14 +184,18 @@ export function SurveyForm({ onSubmit }: SurveyFormProps) {
         <div className="pt-4 border-t border-slate-700">
           <Button 
             onClick={handleSubmit} 
-            disabled={!isComplete}
+            disabled={!isComplete || status === "submitting"}
             className={`w-full py-6 text-lg font-semibold ${
-              isComplete 
+              isComplete && status !== "submitting"
                 ? "bg-amber-600 hover:bg-amber-500 text-white" 
                 : "bg-slate-700 text-slate-400"
             }`}
           >
-            {isComplete ? "Wyślij odpowiedź" : "Odpowiedz na wszystkie pytania"}
+            {status === "submitting" 
+              ? "Zapisywanie..." 
+              : isComplete 
+                ? "Wyślij odpowiedź" 
+                : "Odpowiedz na wszystkie pytania"}
           </Button>
         </div>
       </CardContent>

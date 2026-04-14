@@ -2,11 +2,11 @@
 
 export interface SurveyResponse {
   id: string;
-  timestamp: number;
+  created_at: string;
   communication: number;
   resources: number;
   knowledge: number;
-  socialCapital: number;
+  social_capital: number;
   competencies: number;
 }
 
@@ -24,28 +24,53 @@ export interface SurveyStats {
   resilienceScore: number;
 }
 
-const STORAGE_KEY = "gmina_resilience_survey";
-
-export function getSurveyResponses(): SurveyResponse[] {
-  if (typeof window === "undefined") return [];
-  const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
+export async function fetchSurveyResponses(): Promise<SurveyResponse[]> {
+  try {
+    const response = await fetch('/api/survey', {
+      method: 'GET',
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch responses');
+    }
+    
+    const data = await response.json();
+    return data.responses || [];
+  } catch (error) {
+    console.error('Error fetching responses:', error);
+    return [];
+  }
 }
 
-export function saveSurveyResponse(response: Omit<SurveyResponse, "id" | "timestamp">): void {
-  const responses = getSurveyResponses();
-  const newResponse: SurveyResponse = {
-    ...response,
-    id: crypto.randomUUID(),
-    timestamp: Date.now(),
-  };
-  responses.push(newResponse);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(responses));
+export async function saveSurveyResponse(response: {
+  communication: number;
+  resources: number;
+  knowledge: number;
+  socialCapital: number;
+  competencies: number;
+}): Promise<boolean> {
+  try {
+    const res = await fetch('/api/survey', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(response),
+    });
+    
+    if (!res.ok) {
+      throw new Error('Failed to save response');
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Error saving response:', error);
+    return false;
+  }
 }
 
-export function calculateStats(): SurveyStats {
-  const responses = getSurveyResponses();
-  
+export function calculateStats(responses: SurveyResponse[]): SurveyStats {
   if (responses.length === 0) {
     return {
       totalResponses: 0,
@@ -67,7 +92,7 @@ export function calculateStats(): SurveyStats {
       communication: acc.communication + r.communication,
       resources: acc.resources + r.resources,
       knowledge: acc.knowledge + r.knowledge,
-      socialCapital: acc.socialCapital + r.socialCapital,
+      socialCapital: acc.socialCapital + r.social_capital,
       competencies: acc.competencies + r.competencies,
     }),
     { communication: 0, resources: 0, knowledge: 0, socialCapital: 0, competencies: 0 }
@@ -135,6 +160,10 @@ export function generateForecast(stats: SurveyStats): string[] {
   const forecasts: string[] = [];
   const { averages } = stats;
 
+  if (stats.totalResponses === 0) {
+    return ["📊 Brak danych - wypełnij pierwszą ankietę, aby wygenerować prognozę."];
+  }
+
   if (averages.communication < 2) {
     forecasts.push("⚠️ KRYTYCZNE: Przy braku prądu i internetu nastąpi paraliż informacyjny w ciągu pierwszych 6 godzin kryzysu.");
   } else if (averages.communication < 3.5) {
@@ -172,7 +201,7 @@ export function generateForecast(stats: SurveyStats): string[] {
   }
 
   if (forecasts.length === 0) {
-    forecasts.push("📊 Zebrano niewystarczającą ilość danych do wygenerowania prognozy.");
+    forecasts.push("📊 Wyniki w normie. Monitoruj sytuację i kontynuuj edukację mieszkańców.");
   }
 
   return forecasts;

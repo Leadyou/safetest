@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛡️ Panel Monitorowania Odporności Społecznej Gminy
 
-## Getting Started
+System oceny gotowości mieszkańców na sytuacje kryzysowe (wojna, cyberatak, katastrofy naturalne).
 
-First, run the development server:
+## 🚀 Demo
+
+**Live:** https://safetest-sable.vercel.app
+
+## ✨ Funkcjonalności
+
+- **Ankieta** - 5 pytań oceniających gotowość kryzysową mieszkańców (skala 1-5)
+- **Dashboard** - Wykres radarowy 5 wymiarów odporności
+- **Wskaźniki** - Procent ryzyka paniki vs. odporności
+- **Prognozy** - Automatycznie generowane scenariusze zachowań
+- **Symulacje** - Karty prognozujące reakcje na różne typy kryzysów
+- **Baza w chmurze** - Odpowiedzi z wielu urządzeń agregowane w Supabase
+
+## 🛠️ Konfiguracja
+
+### 1. Klonowanie repozytorium
+
+```bash
+git clone https://github.com/Leadyou/safetest.git
+cd safetest
+npm install
+```
+
+### 2. Konfiguracja Supabase
+
+1. Utwórz konto na [supabase.com](https://supabase.com)
+2. Stwórz nowy projekt
+3. Przejdź do **SQL Editor** i wykonaj poniższy skrypt:
+
+```sql
+-- Tworzenie tabeli odpowiedzi ankiety
+CREATE TABLE survey_responses (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  communication INTEGER NOT NULL CHECK (communication >= 1 AND communication <= 5),
+  resources INTEGER NOT NULL CHECK (resources >= 1 AND resources <= 5),
+  knowledge INTEGER NOT NULL CHECK (knowledge >= 1 AND knowledge <= 5),
+  social_capital INTEGER NOT NULL CHECK (social_capital >= 1 AND social_capital <= 5),
+  competencies INTEGER NOT NULL CHECK (competencies >= 1 AND competencies <= 5)
+);
+
+-- Włączenie Row Level Security
+ALTER TABLE survey_responses ENABLE ROW LEVEL SECURITY;
+
+-- Polityka: każdy może odczytywać
+CREATE POLICY "Allow public read" ON survey_responses
+  FOR SELECT USING (true);
+
+-- Polityka: każdy może dodawać
+CREATE POLICY "Allow public insert" ON survey_responses
+  FOR INSERT WITH CHECK (true);
+```
+
+4. Przejdź do **Settings > API** i skopiuj:
+   - Project URL → `NEXT_PUBLIC_SUPABASE_URL`
+   - anon public key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+### 3. Konfiguracja zmiennych środowiskowych
+
+Utwórz plik `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://twoj-projekt.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=twoj-klucz-anon
+```
+
+### 4. Uruchomienie lokalnie
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Aplikacja będzie dostępna na http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌐 Deploy na Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Zaimportuj repozytorium na [vercel.com](https://vercel.com)
+2. Dodaj zmienne środowiskowe w **Settings > Environment Variables**:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+3. Deploy!
 
-## Learn More
+## 📊 Struktura danych
 
-To learn more about Next.js, take a look at the following resources:
+### Pytania ankiety (skala 1-5)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| # | Wymiar | Opis |
+|---|--------|------|
+| 1 | Komunikacja | Czy mieszkańcy wiedzą, gdzie szukać informacji bez internetu? |
+| 2 | Zasoby | Jaki % mieszkańców posiada zapasy na 72h? |
+| 3 | Wiedza | Czy znają lokalizację schronów i sygnały alarmowe? |
+| 4 | Kapitał społeczny | Czy sąsiedzi będą współpracować? |
+| 5 | Kompetencje | Poziom znajomości pierwszej pomocy |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Obliczenia
 
-## Deploy on Vercel
+- **Wskaźnik Odporności** = (średnia z 5 wymiarów / 5) × 100%
+- **Ryzyko Paniki** = 100% - Wskaźnik Odporności
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔧 Technologie
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js 16](https://nextjs.org/) - Framework React
+- [Tailwind CSS 4](https://tailwindcss.com/) - Stylowanie
+- [Recharts](https://recharts.org/) - Wykresy (Spider/Radar)
+- [Supabase](https://supabase.com/) - Baza danych PostgreSQL
+- [Shadcn/ui](https://ui.shadcn.com/) - Komponenty UI
+
+## 📄 Licencja
+
+MIT

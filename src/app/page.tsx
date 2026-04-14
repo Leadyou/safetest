@@ -6,21 +6,39 @@ import { Button } from "@/components/ui/button";
 import { SurveyForm } from "@/components/survey-form";
 import { ResilienceDashboard } from "@/components/resilience-dashboard";
 import { ScenarioSimulation } from "@/components/scenario-simulation";
-import { calculateStats, SurveyStats, getSurveyResponses } from "@/lib/survey-data";
+import { calculateStats, SurveyStats, fetchSurveyResponses } from "@/lib/survey-data";
 
 type View = "survey" | "dashboard";
 
 export default function Home() {
   const [view, setView] = useState<View>("dashboard");
   const [stats, setStats] = useState<SurveyStats | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const refreshStats = useCallback(() => {
-    setStats(calculateStats());
+  const refreshStats = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const responses = await fetchSurveyResponses();
+      const newStats = calculateStats(responses);
+      setStats(newStats);
+    } catch (err) {
+      console.error('Error fetching stats:', err);
+      setError('Nie udało się pobrać danych. Sprawdź konfigurację Supabase.');
+      setStats({
+        totalResponses: 0,
+        averages: { communication: 0, resources: 0, knowledge: 0, socialCapital: 0, competencies: 0 },
+        overallAverage: 0,
+        panicRisk: 100,
+        resilienceScore: 0,
+      });
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
-    setMounted(true);
     refreshStats();
   }, [refreshStats]);
 
@@ -28,17 +46,13 @@ export default function Home() {
     refreshStats();
   };
 
-  const clearAllData = () => {
-    if (confirm("Czy na pewno chcesz usunąć wszystkie odpowiedzi ankiety?")) {
-      localStorage.removeItem("gmina_resilience_survey");
-      refreshStats();
-    }
-  };
-
-  if (!mounted || !stats) {
+  if (loading) {
     return (
       <main className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-amber-400 animate-pulse">Ładowanie...</div>
+        <div className="text-center">
+          <div className="text-amber-400 animate-pulse text-xl mb-2">Ładowanie danych...</div>
+          <div className="text-slate-500 text-sm">Pobieranie odpowiedzi z bazy danych</div>
+        </div>
       </main>
     );
   }
@@ -61,8 +75,16 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-3">
               <Badge variant="outline" className="border-amber-600 text-amber-400">
-                📊 {stats.totalResponses} odpowiedzi
+                📊 {stats?.totalResponses || 0} odpowiedzi
               </Badge>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={refreshStats}
+                className="text-slate-400 hover:text-white"
+              >
+                🔄 Odśwież
+              </Button>
               <div className="flex gap-2">
                 <Button
                   variant={view === "dashboard" ? "default" : "outline"}
@@ -87,26 +109,27 @@ export default function Home() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
+        {error && (
+          <div className="mb-6 p-4 bg-red-950/50 border border-red-800 rounded-lg text-red-200">
+            <p className="font-semibold">⚠️ Błąd połączenia z bazą danych</p>
+            <p className="text-sm mt-1">{error}</p>
+            <p className="text-sm mt-2 text-slate-400">
+              Upewnij się, że zmienne środowiskowe NEXT_PUBLIC_SUPABASE_URL i NEXT_PUBLIC_SUPABASE_ANON_KEY są poprawnie skonfigurowane.
+            </p>
+          </div>
+        )}
+
         {view === "survey" ? (
           <div className="max-w-2xl mx-auto">
             <SurveyForm onSubmit={handleSurveySubmit} />
           </div>
         ) : (
           <div className="space-y-8">
-            <ResilienceDashboard stats={stats} />
-            <ScenarioSimulation stats={stats} />
-            
-            {stats.totalResponses > 0 && (
-              <div className="flex justify-center pt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={clearAllData}
-                  className="text-red-400 border-red-800 hover:bg-red-950"
-                >
-                  🗑️ Wyczyść wszystkie dane (reset)
-                </Button>
-              </div>
+            {stats && (
+              <>
+                <ResilienceDashboard stats={stats} />
+                <ScenarioSimulation stats={stats} />
+              </>
             )}
           </div>
         )}
@@ -116,10 +139,10 @@ export default function Home() {
         <div className="container mx-auto px-4 py-6">
           <div className="text-center text-sm text-slate-500">
             <p>
-              Panel Monitorowania Odporności Społecznej Gminy v1.0
+              Panel Monitorowania Odporności Społecznej Gminy v2.0
             </p>
             <p className="mt-1">
-              Narzędzie wspierające zarządzanie kryzysowe • Dane anonimowe, przechowywane lokalnie
+              Narzędzie wspierające zarządzanie kryzysowe • Dane anonimowe, przechowywane w chmurze (Supabase)
             </p>
           </div>
         </div>
