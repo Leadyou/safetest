@@ -97,22 +97,12 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
 
   if (status === "success") {
     return (
-      <Card className="border-green-500/30 bg-green-950/20">
+      <Card className="border-teal-500/30 bg-teal-900/20">
         <CardContent className="pt-6">
           <div className="text-center space-y-4">
             <div className="text-5xl">✓</div>
-            <h3 className="text-xl font-semibold text-green-400">Dziękujemy za wypełnienie ankiety!</h3>
-            <p className="text-slate-400">Twoja odpowiedź została zapisana w bazie danych i zaktualizowała globalne statystyki gminy.</p>
-            <Button 
-              variant="outline" 
-              onClick={() => {
-                setValues(defaultValues);
-                setStatus("idle");
-              }}
-              className="mt-4"
-            >
-              Wypełnij ponownie
-            </Button>
+            <h3 className="text-xl font-semibold text-teal-400">Dziękujemy za wypełnienie ankiety!</h3>
+            <p className="text-slate-300">Twoja odpowiedź została zapisana. Za chwilę zobaczysz zaktualizowane wyniki...</p>
           </div>
         </CardContent>
       </Card>
@@ -121,16 +111,15 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
 
   if (status === "error") {
     return (
-      <Card className="border-red-500/30 bg-red-950/20">
+      <Card className="border-red-500/30 bg-red-900/20">
         <CardContent className="pt-6">
           <div className="text-center space-y-4">
             <div className="text-5xl">✗</div>
             <h3 className="text-xl font-semibold text-red-400">Błąd zapisu!</h3>
-            <p className="text-slate-400">Nie udało się zapisać odpowiedzi. Sprawdź połączenie i spróbuj ponownie.</p>
+            <p className="text-slate-300">Nie udało się zapisać odpowiedzi. Sprawdź połączenie i spróbuj ponownie.</p>
             <Button 
-              variant="outline" 
               onClick={() => setStatus("idle")}
-              className="mt-4"
+              className="mt-4 bg-slate-600 hover:bg-slate-500 text-white"
             >
               Spróbuj ponownie
             </Button>
@@ -141,13 +130,13 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
   }
 
   return (
-    <Card className="border-slate-700 bg-slate-900/50">
+    <Card className="border-slate-600 bg-slate-700/50">
       <CardHeader>
-        <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+        <CardTitle className="text-xl text-teal-400 flex items-center gap-2">
           <span className="text-2xl">📋</span>
           Anonimowa ankieta urzędnika
         </CardTitle>
-        <CardDescription className="text-slate-400">
+        <CardDescription className="text-slate-300">
           Oceń przygotowanie mieszkańców gminy na sytuacje kryzysowe (skala 1-5)
         </CardDescription>
       </CardHeader>
@@ -155,10 +144,10 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
         {questions.map((question) => (
           <div key={question.id} className="space-y-3">
             <div>
-              <Label className="text-base font-semibold text-slate-200">
+              <Label className="text-base font-semibold text-slate-100">
                 {question.title}
               </Label>
-              <p className="text-sm text-slate-400 mt-1">{question.description}</p>
+              <p className="text-sm text-slate-300 mt-1">{question.description}</p>
             </div>
             <div className="flex gap-2 flex-wrap">
               {scaleLabels.map(({ value, label }) => (
@@ -168,11 +157,11 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                     values[question.id] === value
                       ? value <= 2
-                        ? "bg-red-600 text-white ring-2 ring-red-400"
+                        ? "bg-orange-600 text-white ring-2 ring-orange-400"
                         : value === 3
-                        ? "bg-yellow-600 text-white ring-2 ring-yellow-400"
-                        : "bg-green-600 text-white ring-2 ring-green-400"
-                      : "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                        ? "bg-cyan-600 text-white ring-2 ring-cyan-400"
+                        : "bg-teal-600 text-white ring-2 ring-teal-400"
+                      : "bg-slate-600 text-slate-200 hover:bg-slate-500"
                   }`}
                 >
                   <span className="font-bold">{value}</span>
@@ -183,20 +172,20 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
           </div>
         ))}
         
-        <div className="pt-4 border-t border-slate-700">
+        <div className="pt-4 border-t border-slate-600">
           <Button 
             onClick={handleSubmit} 
             disabled={!isComplete || status === "submitting"}
-            className={`w-full py-6 text-lg font-semibold ${
+            className={`w-full py-6 text-lg font-semibold rounded-xl ${
               isComplete && status !== "submitting"
-                ? "bg-amber-600 hover:bg-amber-500 text-white" 
-                : "bg-slate-700 text-slate-400"
+                ? "bg-teal-600 hover:bg-teal-500 text-white" 
+                : "bg-slate-600 text-slate-400"
             }`}
           >
             {status === "submitting" 
               ? "Zapisywanie..." 
               : isComplete 
-                ? "Wyślij odpowiedź" 
+                ? "✓ Wyślij odpowiedź" 
                 : "Odpowiedz na wszystkie pytania"}
           </Button>
         </div>

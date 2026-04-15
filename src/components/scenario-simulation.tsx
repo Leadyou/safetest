@@ -80,50 +80,50 @@ const scenarios: Scenario[] = [
 
 const statusConfig = {
   safe: {
-    bg: "bg-green-950/50",
-    border: "border-green-700/50",
-    badge: "bg-green-700 text-green-100",
+    bg: "bg-teal-900/50",
+    border: "border-teal-600/50",
+    badge: "bg-teal-600 text-white",
     badgeLabel: "BEZPIECZNY",
-    glow: "shadow-green-500/20",
+    glow: "shadow-teal-500/20",
   },
   warning: {
-    bg: "bg-yellow-950/50",
-    border: "border-yellow-700/50",
-    badge: "bg-yellow-700 text-yellow-100",
+    bg: "bg-cyan-900/50",
+    border: "border-cyan-600/50",
+    badge: "bg-cyan-600 text-white",
     badgeLabel: "UMIARKOWANY",
-    glow: "shadow-yellow-500/20",
+    glow: "shadow-cyan-500/20",
   },
   danger: {
-    bg: "bg-orange-950/50",
-    border: "border-orange-700/50",
-    badge: "bg-orange-700 text-orange-100",
-    badgeLabel: "ZAGROŻENIE",
-    glow: "shadow-orange-500/20",
+    bg: "bg-slate-600/50",
+    border: "border-slate-500/50",
+    badge: "bg-slate-500 text-white",
+    badgeLabel: "WYMAGAJĄCY",
+    glow: "shadow-slate-500/20",
   },
   critical: {
-    bg: "bg-red-950/50",
-    border: "border-red-700/50",
-    badge: "bg-red-700 text-red-100",
-    badgeLabel: "KRYTYCZNY",
-    glow: "shadow-red-500/20",
+    bg: "bg-slate-700/50",
+    border: "border-slate-500/50",
+    badge: "bg-slate-600 text-white",
+    badgeLabel: "PRIORYTETOWY",
+    glow: "shadow-slate-500/20",
   },
 };
 
 export function ScenarioSimulation({ stats }: ScenarioSimulationProps) {
   if (stats.totalResponses === 0) {
     return (
-      <Card className="border-slate-700 bg-slate-900/50">
+      <Card className="border-slate-600 bg-slate-700/50">
         <CardHeader>
-          <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-400 flex items-center gap-2">
             <span className="text-2xl">🎭</span>
             Symulacja Scenariuszy
           </CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardDescription className="text-slate-300">
             Prognoza reakcji mieszkańców na różne typy kryzysów
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-48 flex items-center justify-center text-slate-500">
+          <div className="h-48 flex items-center justify-center text-slate-400">
             <div className="text-center">
               <div className="text-5xl mb-4">🔒</div>
               <p>Wypełnij ankietę, aby odblokować symulacje</p>
@@ -135,13 +135,13 @@ export function ScenarioSimulation({ stats }: ScenarioSimulationProps) {
   }
 
   return (
-    <Card className="border-slate-700 bg-slate-900/50">
+    <Card className="border-slate-600 bg-slate-700/50">
       <CardHeader>
-        <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+        <CardTitle className="text-xl text-teal-400 flex items-center gap-2">
           <span className="text-2xl">🎭</span>
           Symulacja Scenariuszy
         </CardTitle>
-        <CardDescription className="text-slate-400">
+        <CardDescription className="text-slate-300">
           Prognoza reakcji mieszkańców na różne typy kryzysów
         </CardDescription>
       </CardHeader>

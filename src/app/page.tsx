@@ -83,12 +83,13 @@ function HomeContent() {
 
   const handleSurveySubmit = () => {
     refreshStats();
+    setView("dashboard");
   };
 
   if (!mounted) {
     return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-amber-400 animate-pulse">Ładowanie...</div>
+      <main className="min-h-screen bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 flex items-center justify-center">
+        <div className="text-teal-400 animate-pulse">Ładowanie...</div>
       </main>
     );
   }
@@ -99,11 +100,11 @@ function HomeContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-amber-400 animate-pulse text-xl mb-2">Ładowanie danych...</div>
-          <div className="text-slate-500 text-sm">
-            Pobieranie odpowiedzi dla gminy: <span className="text-amber-400 capitalize">{municipality}</span>
+          <div className="text-teal-400 animate-pulse text-xl mb-2">Ładowanie danych...</div>
+          <div className="text-slate-400 text-sm">
+            Pobieranie odpowiedzi dla gminy: <span className="text-teal-300 capitalize">{municipality}</span>
           </div>
         </div>
       </main>
@@ -113,59 +114,68 @@ function HomeContent() {
   const displayMunicipality = municipality.charAt(0).toUpperCase() + municipality.slice(1);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-      <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-50">
+    <main className="min-h-screen bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800">
+      <header className="border-b border-slate-600 bg-slate-800/90 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col items-center gap-4">
+            {/* Logo i tytuł */}
             <div className="flex items-center gap-3">
-              <span className="text-3xl">🛡️</span>
-              <div>
-                <h1 className="text-xl font-bold text-slate-100">
-                  Panel Monitorowania Odporności
-                </h1>
-                <div className="flex items-center gap-2 text-sm text-slate-400">
-                  <span>Gmina:</span>
-                  <span className="text-amber-400 font-medium">{displayMunicipality}</span>
-                  <button
-                    onClick={handleChangeMunicipality}
-                    className="text-xs text-slate-500 hover:text-slate-300 underline"
-                  >
-                    (zmień)
-                  </button>
-                </div>
+              <span className="text-4xl">🛡️</span>
+              <h1 className="text-2xl font-bold text-white">
+                Panel Monitorowania Odporności Gminy
+              </h1>
+            </div>
+
+            {/* Nazwa gminy - wyraźnie centralnie */}
+            <div className="bg-gradient-to-r from-teal-600 to-cyan-600 px-8 py-3 rounded-xl shadow-lg">
+              <div className="flex items-center gap-3">
+                <span className="text-white text-lg">🏛️</span>
+                <span className="text-white text-2xl font-bold">{displayMunicipality}</span>
+                <button
+                  onClick={handleChangeMunicipality}
+                  className="ml-2 px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg text-sm text-white transition-colors"
+                >
+                  Zmień gminę
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-3 flex-wrap justify-center">
-              <Badge variant="outline" className="border-amber-600 text-amber-400">
+
+            {/* Przyciski nawigacji */}
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Badge className="bg-teal-600 text-white text-base px-4 py-2 rounded-xl">
                 📊 {stats?.totalResponses || 0} odpowiedzi
               </Badge>
+              
               <ShareButton municipality={municipality} />
+              
               <Button
-                variant="ghost"
-                size="sm"
                 onClick={refreshStats}
-                className="text-slate-400 hover:text-white"
+                className="bg-slate-600 hover:bg-slate-500 text-white px-5 py-2 text-base rounded-xl"
               >
                 🔄 Odśwież
               </Button>
-              <div className="flex gap-2">
-                <Button
-                  variant={view === "dashboard" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setView("dashboard")}
-                  className={view === "dashboard" ? "bg-amber-600 hover:bg-amber-500" : ""}
-                >
-                  Dashboard
-                </Button>
-                <Button
-                  variant={view === "survey" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setView("survey")}
-                  className={view === "survey" ? "bg-amber-600 hover:bg-amber-500" : ""}
-                >
-                  Ankieta
-                </Button>
-              </div>
+              
+              <Button
+                onClick={() => setView("dashboard")}
+                className={`px-6 py-2 text-base rounded-xl transition-all ${
+                  view === "dashboard" 
+                    ? "bg-teal-600 hover:bg-teal-500 text-white shadow-lg" 
+                    : "bg-slate-600 hover:bg-slate-500 text-white"
+                }`}
+              >
+                📈 Dashboard
+              </Button>
+              
+              <Button
+                onClick={() => setView("survey")}
+                className={`px-6 py-2 text-base rounded-xl transition-all ${
+                  view === "survey" 
+                    ? "bg-teal-600 hover:bg-teal-500 text-white shadow-lg" 
+                    : "bg-slate-600 hover:bg-slate-500 text-white"
+                }`}
+              >
+                📋 Ankieta
+              </Button>
             </div>
           </div>
         </div>
@@ -173,7 +183,7 @@ function HomeContent() {
 
       <div className="container mx-auto px-4 py-8">
         {error && (
-          <div className="mb-6 p-4 bg-red-950/50 border border-red-800 rounded-lg text-red-200">
+          <div className="mb-6 p-4 bg-red-900/30 border border-red-700 rounded-lg text-red-200">
             <p className="font-semibold">⚠️ Błąd połączenia z bazą danych</p>
             <p className="text-sm mt-1">{error}</p>
             <p className="text-sm mt-2 text-slate-400">
@@ -198,14 +208,14 @@ function HomeContent() {
         )}
       </div>
 
-      <footer className="border-t border-slate-800 mt-16">
+      <footer className="border-t border-slate-600 mt-16">
         <div className="container mx-auto px-4 py-6">
-          <div className="text-center text-sm text-slate-500">
+          <div className="text-center text-sm text-slate-400">
             <p>
-              Panel Monitorowania Odporności Społecznej Gminy v2.0
+              Panel Monitorowania Odporności Gminy v2.1
             </p>
             <p className="mt-1">
-              Narzędzie wspierające zarządzanie kryzysowe • Dane anonimowe, przechowywane w chmurze (Supabase)
+              Narzędzie wspierające zarządzanie kryzysowe • Dane anonimowe
             </p>
           </div>
         </div>
@@ -217,8 +227,8 @@ function HomeContent() {
 export default function Home() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-amber-400 animate-pulse">Ładowanie...</div>
+      <main className="min-h-screen bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 flex items-center justify-center">
+        <div className="text-teal-400 animate-pulse">Ładowanie...</div>
       </main>
     }>
       <HomeContent />

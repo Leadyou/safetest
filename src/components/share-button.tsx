@@ -101,10 +101,8 @@ export function ShareButton({ municipality }: ShareButtonProps) {
   return (
     <div className="relative">
       <Button
-        variant="outline"
-        size="sm"
         onClick={() => setIsOpen(!isOpen)}
-        className="border-amber-600 text-amber-400 hover:bg-amber-950"
+        className="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-2 text-base rounded-xl"
       >
         📤 Udostępnij
       </Button>
@@ -115,15 +113,15 @@ export function ShareButton({ municipality }: ShareButtonProps) {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 top-full mt-2 z-50 w-64 bg-slate-800 border border-slate-700 rounded-xl shadow-xl p-3 space-y-2">
-            <p className="text-xs text-slate-400 mb-3 px-1">
+          <div className="absolute right-0 top-full mt-2 z-50 w-64 bg-slate-700 border border-slate-600 rounded-xl shadow-xl p-3 space-y-2">
+            <p className="text-xs text-slate-300 mb-3 px-1">
               Wyślij link do ankiety:
             </p>
 
             {typeof navigator !== "undefined" && "share" in navigator && (
               <button
                 onClick={handleNativeShare}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-medium transition-colors"
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-medium transition-colors"
               >
                 <span className="text-lg">📲</span>
                 <span>Udostępnij...</span>

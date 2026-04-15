@@ -23,17 +23,17 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
   const forecasts = generateForecast(stats);
 
   const getRiskGradient = () => {
-    if (stats.panicRisk < 25) return "from-green-600 to-green-800";
-    if (stats.panicRisk < 50) return "from-yellow-600 to-yellow-800";
-    if (stats.panicRisk < 75) return "from-orange-600 to-orange-800";
-    return "from-red-600 to-red-800";
+    if (stats.panicRisk < 25) return "from-teal-600 to-teal-700";
+    if (stats.panicRisk < 50) return "from-cyan-600 to-cyan-700";
+    if (stats.panicRisk < 75) return "from-slate-500 to-slate-600";
+    return "from-slate-600 to-slate-700";
   };
 
   const getResilienceGradient = () => {
-    if (stats.resilienceScore >= 75) return "from-green-600 to-green-800";
-    if (stats.resilienceScore >= 50) return "from-yellow-600 to-yellow-800";
-    if (stats.resilienceScore >= 25) return "from-orange-600 to-orange-800";
-    return "from-red-600 to-red-800";
+    if (stats.resilienceScore >= 75) return "from-teal-600 to-teal-700";
+    if (stats.resilienceScore >= 50) return "from-cyan-600 to-cyan-700";
+    if (stats.resilienceScore >= 25) return "from-slate-500 to-slate-600";
+    return "from-slate-600 to-slate-700";
   };
 
   return (
@@ -80,13 +80,13 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
         </Card>
       </div>
 
-      <Card className="border-slate-700 bg-slate-900/50">
+      <Card className="border-slate-600 bg-slate-700/50">
         <CardHeader>
-          <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-400 flex items-center gap-2">
             <span className="text-2xl">📊</span>
             Profil Odporności Gminy
           </CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardDescription className="text-slate-300">
             Wykres radarowy 5 wymiarów gotowości kryzysowej (im większy obszar, tym lepsza odporność)
           </CardDescription>
         </CardHeader>
@@ -115,18 +115,18 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
                 <Radar
                   name="Odporność"
                   dataKey="value"
-                  stroke="#f59e0b"
-                  fill="#f59e0b"
+                  stroke="#14b8a6"
+                  fill="#14b8a6"
                   fillOpacity={0.4}
                   strokeWidth={2}
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#1e293b",
+                    backgroundColor: "#334155",
                     border: "1px solid #475569",
                     borderRadius: "8px",
                   }}
-                  labelStyle={{ color: "#f59e0b" }}
+                  labelStyle={{ color: "#14b8a6" }}
                   itemStyle={{ color: "#e2e8f0" }}
                   formatter={(value) => [typeof value === "number" ? value.toFixed(2) : value, "Średnia"]}
                 />
@@ -136,13 +136,13 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
         </CardContent>
       </Card>
 
-      <Card className="border-slate-700 bg-slate-900/50">
+      <Card className="border-slate-600 bg-slate-700/50">
         <CardHeader>
-          <CardTitle className="text-xl text-amber-400 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-400 flex items-center gap-2">
             <span className="text-2xl">🔮</span>
             Dynamiczna Prognoza Zachowań
           </CardTitle>
-          <CardDescription className="text-slate-400">
+          <CardDescription className="text-slate-300">
             Przewidywane scenariusze oparte na aktualnych danych
           </CardDescription>
         </CardHeader>
@@ -153,12 +153,12 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
                 key={index}
                 className={`p-4 rounded-lg border ${
                   forecast.includes("KRYTYCZNE")
-                    ? "bg-red-950/30 border-red-800/50 text-red-200"
+                    ? "bg-slate-600/50 border-slate-500 text-slate-200"
                     : forecast.includes("RYZYKO")
-                    ? "bg-orange-950/30 border-orange-800/50 text-orange-200"
+                    ? "bg-cyan-900/30 border-cyan-700/50 text-cyan-200"
                     : forecast.includes("ZASÓB") || forecast.includes("SIŁA")
-                    ? "bg-green-950/30 border-green-800/50 text-green-200"
-                    : "bg-slate-800/50 border-slate-700 text-slate-300"
+                    ? "bg-teal-900/30 border-teal-700/50 text-teal-200"
+                    : "bg-slate-600/30 border-slate-500 text-slate-300"
                 }`}
               >
                 {forecast}
