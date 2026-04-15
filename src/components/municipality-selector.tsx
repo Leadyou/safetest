@@ -10,16 +10,14 @@ interface MunicipalitySelectorProps {
 }
 
 const EXAMPLE_MUNICIPALITIES = [
-  "Warszawa",
-  "Kraków", 
-  "Wrocław",
-  "Poznań",
-  "Gdańsk",
-  "Łódź",
-  "Katowice",
-  "Lublin",
-  "Białystok",
-  "Szczecin",
+  "Opole",
+  "Grodków", 
+  "Ujazd",
+  "Zębowice",
+  "Branice",
+  "Niemodlin",
+  "Turawa",
+  "Lewin Brzeski",
 ];
 
 export function MunicipalitySelector({ onSelect }: MunicipalitySelectorProps) {
