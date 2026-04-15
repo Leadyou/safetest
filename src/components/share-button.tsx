@@ -102,9 +102,9 @@ export function ShareButton({ municipality }: ShareButtonProps) {
     <div className="relative">
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-cyan-500 hover:bg-cyan-400 text-white px-5 py-2 text-base rounded-xl"
+        className="bg-blue-500 hover:bg-blue-400 text-white px-6 py-3 text-base rounded-xl"
       >
-        📤 Udostępnij
+        Udostępnij
       </Button>
 
       {isOpen && (

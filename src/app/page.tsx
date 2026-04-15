@@ -118,63 +118,60 @@ function HomeContent() {
       <header className="border-b border-slate-200 bg-white/90 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-4">
-            {/* Logo i tytuł */}
-            <div className="flex items-center gap-3">
-              <span className="text-4xl">🛡️</span>
-              <h1 className="text-2xl font-bold text-slate-800">
-                Panel Monitorowania Odporności Gminy
-              </h1>
-            </div>
-
-            {/* Nazwa gminy - wyraźnie centralnie */}
-            <div className="bg-gradient-to-r from-teal-500 to-cyan-500 px-8 py-3 rounded-xl shadow-lg">
+            {/* Rząd 1: Logo, tytuł i Udostępnij */}
+            <div className="w-full flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-white text-lg">🏛️</span>
-                <span className="text-white text-2xl font-bold">{displayMunicipality}</span>
-                <button
-                  onClick={handleChangeMunicipality}
-                  className="ml-2 px-3 py-1 bg-white/20 hover:bg-white/30 rounded-lg text-sm text-white transition-colors"
-                >
-                  Zmień gminę
-                </button>
+                <span className="text-4xl">🛡️</span>
+                <h1 className="text-2xl font-bold text-slate-800">
+                  Panel Monitorowania Odporności Gminy
+                </h1>
               </div>
+              <ShareButton municipality={municipality} />
             </div>
 
-            {/* Przyciski nawigacji */}
+            {/* Rząd 2: Gmina i przyciski akcji */}
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Badge className="bg-teal-500 text-white text-base px-4 py-2 rounded-xl">
-                📊 {stats?.totalResponses || 0} odpowiedzi
-              </Badge>
-              
-              <ShareButton municipality={municipality} />
-              
-              <Button
-                onClick={refreshStats}
-                className="bg-slate-500 hover:bg-slate-400 text-white px-5 py-2 text-base rounded-xl"
-              >
-                🔄 Odśwież
-              </Button>
+              {/* Nazwa gminy z liczbą odpowiedzi */}
+              <div className="bg-blue-500 px-6 py-3 rounded-xl">
+                <span className="text-white text-lg font-bold">
+                  {displayMunicipality} ({stats?.totalResponses || 0} odp.)
+                </span>
+              </div>
               
               <Button
-                onClick={() => setView("dashboard")}
-                className={`px-6 py-2 text-base rounded-xl transition-all ${
-                  view === "dashboard" 
-                    ? "bg-teal-500 hover:bg-teal-400 text-white shadow-lg" 
-                    : "bg-slate-200 hover:bg-slate-300 text-slate-700"
-                }`}
+                onClick={handleChangeMunicipality}
+                className="bg-blue-500 hover:bg-blue-400 text-white px-6 py-3 text-base rounded-xl"
               >
-                📈 Dashboard
+                Zmień gminę
               </Button>
               
               <Button
                 onClick={() => setView("survey")}
-                className={`px-6 py-2 text-base rounded-xl transition-all ${
+                className={`px-6 py-3 text-base rounded-xl transition-all ${
                   view === "survey" 
-                    ? "bg-teal-500 hover:bg-teal-400 text-white shadow-lg" 
-                    : "bg-slate-200 hover:bg-slate-300 text-slate-700"
+                    ? "bg-blue-600 hover:bg-blue-500 text-white" 
+                    : "bg-blue-500 hover:bg-blue-400 text-white"
                 }`}
               >
-                📋 Ankieta
+                Ankieta
+              </Button>
+              
+              <Button
+                onClick={() => setView("dashboard")}
+                className={`px-6 py-3 text-base rounded-xl transition-all ${
+                  view === "dashboard" 
+                    ? "bg-blue-600 hover:bg-blue-500 text-white" 
+                    : "bg-blue-500 hover:bg-blue-400 text-white"
+                }`}
+              >
+                Dashboard
+              </Button>
+              
+              <Button
+                onClick={refreshStats}
+                className="bg-blue-500 hover:bg-blue-400 text-white px-6 py-3 text-base rounded-xl"
+              >
+                Odśwież
               </Button>
             </div>
           </div>
