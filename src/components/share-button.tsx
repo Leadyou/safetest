@@ -28,18 +28,6 @@ export function ShareButton({ municipality }: ShareButtonProps) {
     setIsOpen(false);
   };
 
-  const handleEmail = () => {
-    const subject = encodeURIComponent("Ankieta: Przygotowanie Kryzysowe Gminy");
-    const body = encodeURIComponent(shareText + "\n\n" + shareUrl);
-    const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
-    
-    const link = document.createElement('a');
-    link.href = mailtoUrl;
-    link.click();
-    
-    setIsOpen(false);
-  };
-
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
@@ -72,16 +60,9 @@ export function ShareButton({ municipality }: ShareButtonProps) {
 
             <button
               onClick={handleWhatsApp}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white font-medium transition-colors"
+              className="w-full flex items-center justify-center px-3 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white font-medium transition-colors"
             >
-              <span>WhatsApp</span>
-            </button>
-
-            <button
-              onClick={handleEmail}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-600 hover:bg-slate-500 text-white font-medium transition-colors"
-            >
-              <span>Email</span>
+              WhatsApp
             </button>
 
             <div className="pt-2 border-t border-slate-200">
