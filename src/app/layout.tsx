@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Panel Monitorowania Odporności Społecznej Gminy",
+  title: "Panel Monitoringu Społecznego Przygotowania Kryzysowego",
   description: "System oceny gotowości mieszkańców na sytuacje kryzysowe - wojna, cyberatak, katastrofy naturalne",
 };
 

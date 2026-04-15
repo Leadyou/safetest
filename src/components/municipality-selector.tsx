@@ -38,7 +38,7 @@ export function MunicipalitySelector({ onSelect }: MunicipalitySelectorProps) {
         <CardHeader className="text-center">
           <div className="text-5xl mb-4">🏛️</div>
           <CardTitle className="text-2xl text-teal-600">
-            Panel Monitorowania Odporności Gminy
+            Panel Monitoringu Społecznego Przygotowania Kryzysowego
           </CardTitle>
           <CardDescription className="text-slate-600 text-base">
             Wybierz gminę, dla której chcesz wypełnić ankietę lub zobaczyć wyniki

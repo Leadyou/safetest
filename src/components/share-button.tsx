@@ -85,7 +85,7 @@ export function ShareButton({ municipality }: ShareButtonProps) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: "Panel Monitorowania Odporności Społecznej Gminy",
+          title: "Panel Monitoringu Społecznego Przygotowania Kryzysowego",
           text: shareText,
           url: shareUrl,
         });

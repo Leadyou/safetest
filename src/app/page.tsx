@@ -123,7 +123,7 @@ function HomeContent() {
               <div className="flex items-center gap-3">
                 <span className="text-4xl">🛡️</span>
                 <h1 className="text-2xl font-bold text-slate-800">
-                  Panel Monitorowania Odporności Gminy
+                  Panel Monitoringu Społecznego Przygotowania Kryzysowego
                 </h1>
               </div>
               <ShareButton municipality={municipality} />
@@ -209,7 +209,7 @@ function HomeContent() {
         <div className="container mx-auto px-4 py-6">
           <div className="text-center text-sm text-slate-500">
             <p>
-              Panel Monitorowania Odporności Gminy v2.1
+              Panel Monitoringu Społecznego Przygotowania Kryzysowego v2.1
             </p>
             <p className="mt-1">
               Narzędzie wspierające zarządzanie kryzysowe • Dane anonimowe
