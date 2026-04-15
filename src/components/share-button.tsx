@@ -31,7 +31,12 @@ export function ShareButton({ municipality }: ShareButtonProps) {
   const handleEmail = () => {
     const subject = encodeURIComponent("Ankieta: Przygotowanie Kryzysowe Gminy");
     const body = encodeURIComponent(shareText + "\n\n" + shareUrl);
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    const mailtoUrl = `mailto:?subject=${subject}&body=${body}`;
+    
+    const link = document.createElement('a');
+    link.href = mailtoUrl;
+    link.click();
+    
     setIsOpen(false);
   };
 
