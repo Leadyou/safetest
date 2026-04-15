@@ -80,19 +80,19 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
         </Card>
       </div>
 
-      <Card className="border-slate-600 bg-slate-700/50">
+      <Card className="border-slate-200 bg-white shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl text-teal-400 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-600 flex items-center gap-2">
             <span className="text-2xl">📊</span>
             Profil Odporności Gminy
           </CardTitle>
-          <CardDescription className="text-slate-300">
+          <CardDescription className="text-slate-600">
             Wykres radarowy 5 wymiarów gotowości kryzysowej (im większy obszar, tym lepsza odporność)
           </CardDescription>
         </CardHeader>
         <CardContent>
           {stats.totalResponses === 0 ? (
-            <div className="h-80 flex items-center justify-center text-slate-500">
+            <div className="h-80 flex items-center justify-center text-slate-400">
               <div className="text-center">
                 <div className="text-5xl mb-4">📭</div>
                 <p>Brak danych - wypełnij pierwszą ankietę</p>
@@ -101,10 +101,10 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
           ) : (
             <ResponsiveContainer width="100%" height={350}>
               <RadarChart data={radarData} margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
-                <PolarGrid stroke="#475569" />
+                <PolarGrid stroke="#cbd5e1" />
                 <PolarAngleAxis 
                   dataKey="dimension" 
-                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                  tick={{ fill: "#475569", fontSize: 12 }}
                 />
                 <PolarRadiusAxis 
                   angle={90} 
@@ -122,12 +122,13 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#334155",
-                    border: "1px solid #475569",
+                    backgroundColor: "#ffffff",
+                    border: "1px solid #e2e8f0",
                     borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
                   }}
-                  labelStyle={{ color: "#14b8a6" }}
-                  itemStyle={{ color: "#e2e8f0" }}
+                  labelStyle={{ color: "#0d9488" }}
+                  itemStyle={{ color: "#334155" }}
                   formatter={(value) => [typeof value === "number" ? value.toFixed(2) : value, "Średnia"]}
                 />
               </RadarChart>
@@ -136,13 +137,13 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
         </CardContent>
       </Card>
 
-      <Card className="border-slate-600 bg-slate-700/50">
+      <Card className="border-slate-200 bg-white shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl text-teal-400 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-600 flex items-center gap-2">
             <span className="text-2xl">🔮</span>
             Dynamiczna Prognoza Zachowań
           </CardTitle>
-          <CardDescription className="text-slate-300">
+          <CardDescription className="text-slate-600">
             Przewidywane scenariusze oparte na aktualnych danych
           </CardDescription>
         </CardHeader>
@@ -153,12 +154,12 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
                 key={index}
                 className={`p-4 rounded-lg border ${
                   forecast.includes("KRYTYCZNE")
-                    ? "bg-slate-600/50 border-slate-500 text-slate-200"
+                    ? "bg-slate-100 border-slate-300 text-slate-700"
                     : forecast.includes("RYZYKO")
-                    ? "bg-cyan-900/30 border-cyan-700/50 text-cyan-200"
+                    ? "bg-cyan-50 border-cyan-200 text-cyan-800"
                     : forecast.includes("ZASÓB") || forecast.includes("SIŁA")
-                    ? "bg-teal-900/30 border-teal-700/50 text-teal-200"
-                    : "bg-slate-600/30 border-slate-500 text-slate-300"
+                    ? "bg-teal-50 border-teal-200 text-teal-800"
+                    : "bg-slate-50 border-slate-200 text-slate-600"
                 }`}
               >
                 {forecast}

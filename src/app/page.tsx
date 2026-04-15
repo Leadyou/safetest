@@ -88,8 +88,8 @@ function HomeContent() {
 
   if (!mounted) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 flex items-center justify-center">
-        <div className="text-teal-400 animate-pulse">Ładowanie...</div>
+      <main className="min-h-screen bg-gradient-to-b from-slate-100 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-teal-600 animate-pulse">Ładowanie...</div>
       </main>
     );
   }
@@ -100,11 +100,11 @@ function HomeContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 flex items-center justify-center">
+      <main className="min-h-screen bg-gradient-to-b from-slate-100 via-white to-slate-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-teal-400 animate-pulse text-xl mb-2">Ładowanie danych...</div>
-          <div className="text-slate-400 text-sm">
-            Pobieranie odpowiedzi dla gminy: <span className="text-teal-300 capitalize">{municipality}</span>
+          <div className="text-teal-600 animate-pulse text-xl mb-2">Ładowanie danych...</div>
+          <div className="text-slate-500 text-sm">
+            Pobieranie odpowiedzi dla gminy: <span className="text-teal-600 capitalize">{municipality}</span>
           </div>
         </div>
       </main>
@@ -114,20 +114,20 @@ function HomeContent() {
   const displayMunicipality = municipality.charAt(0).toUpperCase() + municipality.slice(1);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800">
-      <header className="border-b border-slate-600 bg-slate-800/90 backdrop-blur-sm sticky top-0 z-50">
+    <main className="min-h-screen bg-gradient-to-b from-slate-100 via-white to-slate-100">
+      <header className="border-b border-slate-200 bg-white/90 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex flex-col items-center gap-4">
             {/* Logo i tytuł */}
             <div className="flex items-center gap-3">
               <span className="text-4xl">🛡️</span>
-              <h1 className="text-2xl font-bold text-white">
+              <h1 className="text-2xl font-bold text-slate-800">
                 Panel Monitorowania Odporności Gminy
               </h1>
             </div>
 
             {/* Nazwa gminy - wyraźnie centralnie */}
-            <div className="bg-gradient-to-r from-teal-600 to-cyan-600 px-8 py-3 rounded-xl shadow-lg">
+            <div className="bg-gradient-to-r from-teal-500 to-cyan-500 px-8 py-3 rounded-xl shadow-lg">
               <div className="flex items-center gap-3">
                 <span className="text-white text-lg">🏛️</span>
                 <span className="text-white text-2xl font-bold">{displayMunicipality}</span>
@@ -142,7 +142,7 @@ function HomeContent() {
 
             {/* Przyciski nawigacji */}
             <div className="flex flex-wrap items-center justify-center gap-3">
-              <Badge className="bg-teal-600 text-white text-base px-4 py-2 rounded-xl">
+              <Badge className="bg-teal-500 text-white text-base px-4 py-2 rounded-xl">
                 📊 {stats?.totalResponses || 0} odpowiedzi
               </Badge>
               
@@ -150,7 +150,7 @@ function HomeContent() {
               
               <Button
                 onClick={refreshStats}
-                className="bg-slate-600 hover:bg-slate-500 text-white px-5 py-2 text-base rounded-xl"
+                className="bg-slate-500 hover:bg-slate-400 text-white px-5 py-2 text-base rounded-xl"
               >
                 🔄 Odśwież
               </Button>
@@ -159,8 +159,8 @@ function HomeContent() {
                 onClick={() => setView("dashboard")}
                 className={`px-6 py-2 text-base rounded-xl transition-all ${
                   view === "dashboard" 
-                    ? "bg-teal-600 hover:bg-teal-500 text-white shadow-lg" 
-                    : "bg-slate-600 hover:bg-slate-500 text-white"
+                    ? "bg-teal-500 hover:bg-teal-400 text-white shadow-lg" 
+                    : "bg-slate-200 hover:bg-slate-300 text-slate-700"
                 }`}
               >
                 📈 Dashboard
@@ -170,8 +170,8 @@ function HomeContent() {
                 onClick={() => setView("survey")}
                 className={`px-6 py-2 text-base rounded-xl transition-all ${
                   view === "survey" 
-                    ? "bg-teal-600 hover:bg-teal-500 text-white shadow-lg" 
-                    : "bg-slate-600 hover:bg-slate-500 text-white"
+                    ? "bg-teal-500 hover:bg-teal-400 text-white shadow-lg" 
+                    : "bg-slate-200 hover:bg-slate-300 text-slate-700"
                 }`}
               >
                 📋 Ankieta
@@ -183,10 +183,10 @@ function HomeContent() {
 
       <div className="container mx-auto px-4 py-8">
         {error && (
-          <div className="mb-6 p-4 bg-red-900/30 border border-red-700 rounded-lg text-red-200">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
             <p className="font-semibold">⚠️ Błąd połączenia z bazą danych</p>
             <p className="text-sm mt-1">{error}</p>
-            <p className="text-sm mt-2 text-slate-400">
+            <p className="text-sm mt-2 text-red-500">
               Upewnij się, że zmienne środowiskowe NEXT_PUBLIC_SUPABASE_URL i NEXT_PUBLIC_SUPABASE_ANON_KEY są poprawnie skonfigurowane.
             </p>
           </div>
@@ -208,9 +208,9 @@ function HomeContent() {
         )}
       </div>
 
-      <footer className="border-t border-slate-600 mt-16">
+      <footer className="border-t border-slate-200 mt-16 bg-white">
         <div className="container mx-auto px-4 py-6">
-          <div className="text-center text-sm text-slate-400">
+          <div className="text-center text-sm text-slate-500">
             <p>
               Panel Monitorowania Odporności Gminy v2.1
             </p>
@@ -227,8 +227,8 @@ function HomeContent() {
 export default function Home() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-gradient-to-b from-slate-800 via-slate-700 to-slate-800 flex items-center justify-center">
-        <div className="text-teal-400 animate-pulse">Ładowanie...</div>
+      <main className="min-h-screen bg-gradient-to-b from-slate-100 via-white to-slate-100 flex items-center justify-center">
+        <div className="text-teal-600 animate-pulse">Ładowanie...</div>
       </main>
     }>
       <HomeContent />

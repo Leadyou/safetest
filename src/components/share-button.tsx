@@ -102,7 +102,7 @@ export function ShareButton({ municipality }: ShareButtonProps) {
     <div className="relative">
       <Button
         onClick={() => setIsOpen(!isOpen)}
-        className="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-2 text-base rounded-xl"
+        className="bg-cyan-500 hover:bg-cyan-400 text-white px-5 py-2 text-base rounded-xl"
       >
         📤 Udostępnij
       </Button>
@@ -113,15 +113,15 @@ export function ShareButton({ municipality }: ShareButtonProps) {
             className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 top-full mt-2 z-50 w-64 bg-slate-700 border border-slate-600 rounded-xl shadow-xl p-3 space-y-2">
-            <p className="text-xs text-slate-300 mb-3 px-1">
+          <div className="absolute right-0 top-full mt-2 z-50 w-64 bg-white border border-slate-200 rounded-xl shadow-xl p-3 space-y-2">
+            <p className="text-xs text-slate-500 mb-3 px-1">
               Wyślij link do ankiety:
             </p>
 
             {typeof navigator !== "undefined" && "share" in navigator && (
               <button
                 onClick={handleNativeShare}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-teal-600 hover:bg-teal-500 text-white font-medium transition-colors"
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg bg-teal-500 hover:bg-teal-400 text-white font-medium transition-colors"
               >
                 <span className="text-lg">📲</span>
                 <span>Udostępnij...</span>
@@ -141,10 +141,10 @@ export function ShareButton({ municipality }: ShareButtonProps) {
               ))}
             </div>
 
-            <div className="pt-2 border-t border-slate-700">
+            <div className="pt-2 border-t border-slate-200">
               <button
                 onClick={handleCopyLink}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium transition-colors"
               >
                 {copied ? (
                   <>

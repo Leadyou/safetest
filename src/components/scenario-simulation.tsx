@@ -80,45 +80,45 @@ const scenarios: Scenario[] = [
 
 const statusConfig = {
   safe: {
-    bg: "bg-teal-900/50",
-    border: "border-teal-600/50",
-    badge: "bg-teal-600 text-white",
+    bg: "bg-teal-50",
+    border: "border-teal-200",
+    badge: "bg-teal-500 text-white",
     badgeLabel: "BEZPIECZNY",
-    glow: "shadow-teal-500/20",
+    glow: "shadow-md",
   },
   warning: {
-    bg: "bg-cyan-900/50",
-    border: "border-cyan-600/50",
-    badge: "bg-cyan-600 text-white",
+    bg: "bg-cyan-50",
+    border: "border-cyan-200",
+    badge: "bg-cyan-500 text-white",
     badgeLabel: "UMIARKOWANY",
-    glow: "shadow-cyan-500/20",
+    glow: "shadow-md",
   },
   danger: {
-    bg: "bg-slate-600/50",
-    border: "border-slate-500/50",
+    bg: "bg-slate-100",
+    border: "border-slate-300",
     badge: "bg-slate-500 text-white",
     badgeLabel: "WYMAGAJĄCY",
-    glow: "shadow-slate-500/20",
+    glow: "shadow-md",
   },
   critical: {
-    bg: "bg-slate-700/50",
-    border: "border-slate-500/50",
+    bg: "bg-slate-200",
+    border: "border-slate-400",
     badge: "bg-slate-600 text-white",
     badgeLabel: "PRIORYTETOWY",
-    glow: "shadow-slate-500/20",
+    glow: "shadow-md",
   },
 };
 
 export function ScenarioSimulation({ stats }: ScenarioSimulationProps) {
   if (stats.totalResponses === 0) {
     return (
-      <Card className="border-slate-600 bg-slate-700/50">
+      <Card className="border-slate-200 bg-white shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl text-teal-400 flex items-center gap-2">
+          <CardTitle className="text-xl text-teal-600 flex items-center gap-2">
             <span className="text-2xl">🎭</span>
             Symulacja Scenariuszy
           </CardTitle>
-          <CardDescription className="text-slate-300">
+          <CardDescription className="text-slate-600">
             Prognoza reakcji mieszkańców na różne typy kryzysów
           </CardDescription>
         </CardHeader>
@@ -135,13 +135,13 @@ export function ScenarioSimulation({ stats }: ScenarioSimulationProps) {
   }
 
   return (
-    <Card className="border-slate-600 bg-slate-700/50">
+    <Card className="border-slate-200 bg-white shadow-lg">
       <CardHeader>
-        <CardTitle className="text-xl text-teal-400 flex items-center gap-2">
+        <CardTitle className="text-xl text-teal-600 flex items-center gap-2">
           <span className="text-2xl">🎭</span>
           Symulacja Scenariuszy
         </CardTitle>
-        <CardDescription className="text-slate-300">
+        <CardDescription className="text-slate-600">
           Prognoza reakcji mieszkańców na różne typy kryzysów
         </CardDescription>
       </CardHeader>
@@ -154,7 +154,7 @@ export function ScenarioSimulation({ stats }: ScenarioSimulationProps) {
             return (
               <div
                 key={scenario.id}
-                className={`p-4 rounded-xl border-2 ${config.bg} ${config.border} shadow-lg ${config.glow} transition-all hover:scale-[1.02]`}
+                className={`p-4 rounded-xl border-2 ${config.bg} ${config.border} ${config.glow} transition-all hover:scale-[1.02]`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-3xl">{scenario.icon}</span>
@@ -162,10 +162,10 @@ export function ScenarioSimulation({ stats }: ScenarioSimulationProps) {
                     {config.badgeLabel}
                   </Badge>
                 </div>
-                <h3 className="font-semibold text-slate-200 mb-2">
+                <h3 className="font-semibold text-slate-700 mb-2">
                   {scenario.title}
                 </h3>
-                <p className="text-sm text-slate-400">
+                <p className="text-sm text-slate-600">
                   {result.message}
                 </p>
               </div>
