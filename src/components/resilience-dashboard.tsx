@@ -82,8 +82,7 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
 
       <Card className="border-slate-200 bg-white shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl text-teal-600 flex items-center gap-2">
-            <span className="text-2xl">📊</span>
+          <CardTitle className="text-xl text-teal-600">
             Profil Odporności Gminy
           </CardTitle>
           <CardDescription className="text-slate-600">
@@ -139,8 +138,7 @@ export function ResilienceDashboard({ stats }: ResilienceDashboardProps) {
 
       <Card className="border-slate-200 bg-white shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl text-teal-600 flex items-center gap-2">
-            <span className="text-2xl">🔮</span>
+          <CardTitle className="text-xl text-teal-600">
             Dynamiczna Prognoza Zachowań
           </CardTitle>
           <CardDescription className="text-slate-600">

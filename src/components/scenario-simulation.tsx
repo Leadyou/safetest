@@ -114,8 +114,7 @@ export function ScenarioSimulation({ stats }: ScenarioSimulationProps) {
     return (
       <Card className="border-slate-200 bg-white shadow-lg">
         <CardHeader>
-          <CardTitle className="text-xl text-teal-600 flex items-center gap-2">
-            <span className="text-2xl">🎭</span>
+          <CardTitle className="text-xl text-teal-600">
             Symulacja Scenariuszy
           </CardTitle>
           <CardDescription className="text-slate-600">
@@ -137,8 +136,7 @@ export function ScenarioSimulation({ stats }: ScenarioSimulationProps) {
   return (
     <Card className="border-slate-200 bg-white shadow-lg">
       <CardHeader>
-        <CardTitle className="text-xl text-teal-600 flex items-center gap-2">
-          <span className="text-2xl">🎭</span>
+        <CardTitle className="text-xl text-teal-600">
           Symulacja Scenariuszy
         </CardTitle>
         <CardDescription className="text-slate-600">
