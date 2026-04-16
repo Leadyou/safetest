@@ -4,6 +4,8 @@ export interface SurveyResponse {
   id: string;
   created_at: string;
   municipality: string;
+  respondent_name?: string | null;
+  suggested_actions?: string | null;
   communication: number;
   resources: number;
   knowledge: number;
@@ -46,6 +48,8 @@ export async function fetchSurveyResponses(municipality: string): Promise<Survey
 
 export async function saveSurveyResponse(response: {
   municipality: string;
+  respondentName?: string;
+  suggestedActions?: string;
   communication: number;
   resources: number;
   knowledge: number;

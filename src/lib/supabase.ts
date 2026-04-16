@@ -23,6 +23,8 @@ export interface DbSurveyResponse {
   id?: string;
   created_at?: string;
   municipality: string;
+  respondent_name?: string | null;
+  suggested_actions?: string | null;
   communication: number;
   resources: number;
   knowledge: number;

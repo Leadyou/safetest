@@ -56,8 +56,13 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
     
+    const nameRaw = typeof body.respondentName === "string" ? body.respondentName.trim() : "";
+    const actionsRaw = typeof body.suggestedActions === "string" ? body.suggestedActions.trim() : "";
+
     const newResponse: DbSurveyResponse = {
       municipality: body.municipality.toLowerCase(),
+      respondent_name: nameRaw.length > 0 ? nameRaw.slice(0, 120) : null,
+      suggested_actions: actionsRaw.length > 0 ? actionsRaw.slice(0, 4000) : null,
       communication: body.communication,
       resources: body.resources,
       knowledge: body.knowledge,

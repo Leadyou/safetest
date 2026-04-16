@@ -67,6 +67,8 @@ interface SurveyFormProps {
 
 export function SurveyForm({ municipality, onSaved, onGoToDashboard }: SurveyFormProps) {
   const [values, setValues] = useState(defaultValues);
+  const [respondentName, setRespondentName] = useState("");
+  const [suggestedActions, setSuggestedActions] = useState("");
   const [status, setStatus] = useState<SubmitStatus>("idle");
   const [comparisonStats, setComparisonStats] = useState<SurveyStats | null>(null);
   const [savedSnapshot, setSavedSnapshot] = useState<typeof defaultValues | null>(null);
@@ -84,6 +86,8 @@ export function SurveyForm({ municipality, onSaved, onGoToDashboard }: SurveyFor
 
     const success = await saveSurveyResponse({
       municipality,
+      respondentName: respondentName.trim() || undefined,
+      suggestedActions: suggestedActions.trim() || undefined,
       communication: values.communication,
       resources: values.resources,
       knowledge: values.knowledge,
@@ -105,6 +109,8 @@ export function SurveyForm({ municipality, onSaved, onGoToDashboard }: SurveyFor
 
   const handleGoToDashboard = () => {
     setValues(defaultValues);
+    setRespondentName("");
+    setSuggestedActions("");
     setComparisonStats(null);
     setSavedSnapshot(null);
     setStatus("idle");
@@ -113,6 +119,8 @@ export function SurveyForm({ municipality, onSaved, onGoToDashboard }: SurveyFor
 
   const handleFillAnother = () => {
     setValues(defaultValues);
+    setRespondentName("");
+    setSuggestedActions("");
     setComparisonStats(null);
     setSavedSnapshot(null);
     setStatus("idle");
@@ -235,6 +243,35 @@ export function SurveyForm({ municipality, onSaved, onGoToDashboard }: SurveyFor
             </div>
           </div>
         ))}
+
+        <div className="space-y-4 pt-4 border-t border-slate-200">
+          <div>
+            <Label htmlFor="respondent-name" className="text-base font-semibold text-slate-800">
+              Imię wypełniającego <span className="text-slate-500 font-normal">(opcjonalnie)</span>
+            </Label>
+            <input
+              id="respondent-name"
+              type="text"
+              value={respondentName}
+              onChange={(e) => setRespondentName(e.target.value.slice(0, 120))}
+              placeholder="Np. Jan"
+              className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            />
+          </div>
+          <div>
+            <Label htmlFor="suggested-actions" className="text-base font-semibold text-slate-800">
+              Sugerowane działania <span className="text-slate-500 font-normal">(opcjonalnie)</span>
+            </Label>
+            <textarea
+              id="suggested-actions"
+              value={suggestedActions}
+              onChange={(e) => setSuggestedActions(e.target.value.slice(0, 4000))}
+              placeholder="Np. więcej szkoleń, ulotki informacyjne…"
+              rows={4}
+              className="mt-2 w-full px-4 py-3 border border-slate-300 rounded-lg text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 resize-y min-h-[100px]"
+            />
+          </div>
+        </div>
 
         <div className="pt-4 border-t border-slate-200">
           <Button

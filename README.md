@@ -8,7 +8,7 @@ System oceny gotowości mieszkańców na sytuacje kryzysowe (wojna, cyberatak, k
 
 ## ✨ Funkcjonalności
 
-- **Ankieta** - 5 pytań oceniających gotowość kryzysową mieszkańców (skala 1-5)
+- **Ankieta** - 5 pytań (skala 1-5), opcjonalnie imię i sugerowane działania
 - **Dashboard** - Wykres radarowy 5 wymiarów odporności
 - **Wskaźniki** - Procent ryzyka paniki vs. odporności
 - **Prognozy** - Automatycznie generowane scenariusze zachowań
@@ -75,6 +75,13 @@ ALTER TABLE survey_responses ALTER COLUMN municipality SET NOT NULL;
 CREATE INDEX idx_survey_municipality ON survey_responses(municipality);
 ```
 
+**Opcjonalnie: imię i sugerowane działania (migracja dla istniejących projektów):**
+
+```sql
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS respondent_name TEXT;
+ALTER TABLE survey_responses ADD COLUMN IF NOT EXISTS suggested_actions TEXT;
+```
+
 4. Przejdź do **Settings > API** i skopiuj:
    - Project URL → `NEXT_PUBLIC_SUPABASE_URL`
    - anon public key → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
@@ -86,7 +93,16 @@ Utwórz plik `.env.local`:
 ```env
 NEXT_PUBLIC_SUPABASE_URL=https://twoj-projekt.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=twoj-klucz-anon
+# Statystyki dzienne dla administratora (strona /admin/ankiety)
+SURVEY_ADMIN_STATS_SECRET=twoj-dlugi-losowy-klucz-min-8-znakow
 ```
+
+### Statystyki ankiet dla administratora
+
+1. Ustaw `SURVEY_ADMIN_STATS_SECRET` (min. 8 znaków) w Vercel / `.env.local`.
+2. Otwórz **/admin/ankiety** w przeglądarce.
+3. Wpisz ten sam klucz i kliknij „Pobierz statystyki” — zobaczysz liczbę nowych ankiet **w poszczególnych dniach** (strefa Europe/Warsaw, ostatnie 2 lata).
+4. Możesz filtrować po gminie (np. `opole`).
 
 ### 4. Uruchomienie lokalnie
 
@@ -102,6 +118,7 @@ Aplikacja będzie dostępna na http://localhost:3000
 2. Dodaj zmienne środowiskowe w **Settings > Environment Variables**:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - opcjonalnie `SURVEY_ADMIN_STATS_SECRET` (panel `/admin/ankiety`)
 3. Deploy!
 
 ## 📊 Struktura danych
