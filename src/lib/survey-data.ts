@@ -128,6 +128,14 @@ export function calculateStats(responses: SurveyResponse[]): SurveyStats {
   };
 }
 
+export interface UserSurveyScores {
+  communication: number;
+  resources: number;
+  knowledge: number;
+  socialCapital: number;
+  competencies: number;
+}
+
 export function getRadarData(stats: SurveyStats) {
   return [
     {
@@ -155,6 +163,20 @@ export function getRadarData(stats: SurveyStats) {
       value: stats.averages.competencies,
       fullMark: 5,
     },
+  ];
+}
+
+/** Dane do wykresu porównawczego: Twoja ocena vs średnia gminy (wszystkie ankiety, łącznie z Twoją). */
+export function getComparisonRadarData(
+  user: UserSurveyScores,
+  stats: SurveyStats
+): { dimension: string; twojaOcena: number; sredniaGminy: number }[] {
+  return [
+    { dimension: "Komunikacja", twojaOcena: user.communication, sredniaGminy: stats.averages.communication },
+    { dimension: "Zasoby", twojaOcena: user.resources, sredniaGminy: stats.averages.resources },
+    { dimension: "Wiedza", twojaOcena: user.knowledge, sredniaGminy: stats.averages.knowledge },
+    { dimension: "Kapitał społeczny", twojaOcena: user.socialCapital, sredniaGminy: stats.averages.socialCapital },
+    { dimension: "Kompetencje", twojaOcena: user.competencies, sredniaGminy: stats.averages.competencies },
   ];
 }
 

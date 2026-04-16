@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { saveSurveyResponse } from "@/lib/survey-data";
+import { saveSurveyResponse, fetchSurveyResponses, calculateStats, SurveyStats } from "@/lib/survey-data";
+import { SurveyComparisonChart } from "@/components/survey-comparison-chart";
 
 type SubmitStatus = "idle" | "submitting" | "success" | "error";
 
@@ -60,12 +61,15 @@ const defaultValues = {
 
 interface SurveyFormProps {
   municipality: string;
-  onSubmit: () => void;
+  onSaved: () => void | Promise<void>;
+  onGoToDashboard: () => void;
 }
 
-export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
+export function SurveyForm({ municipality, onSaved, onGoToDashboard }: SurveyFormProps) {
   const [values, setValues] = useState(defaultValues);
   const [status, setStatus] = useState<SubmitStatus>("idle");
+  const [comparisonStats, setComparisonStats] = useState<SurveyStats | null>(null);
+  const [savedSnapshot, setSavedSnapshot] = useState<typeof defaultValues | null>(null);
 
   const handleValueChange = (questionId: keyof typeof defaultValues, value: number) => {
     setValues((prev) => ({ ...prev, [questionId]: value }));
@@ -75,9 +79,9 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
 
   const handleSubmit = async () => {
     if (!isComplete || status === "submitting") return;
-    
+
     setStatus("submitting");
-    
+
     const success = await saveSurveyResponse({
       municipality,
       communication: values.communication,
@@ -86,26 +90,86 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
       socialCapital: values.socialCapital,
       competencies: values.competencies,
     });
-    
+
     if (success) {
+      const responses = await fetchSurveyResponses(municipality);
+      const stats = calculateStats(responses);
+      setComparisonStats(stats);
+      setSavedSnapshot({ ...values });
+      await onSaved();
       setStatus("success");
-      onSubmit();
     } else {
       setStatus("error");
     }
   };
 
-  if (status === "success") {
+  const handleGoToDashboard = () => {
+    setValues(defaultValues);
+    setComparisonStats(null);
+    setSavedSnapshot(null);
+    setStatus("idle");
+    onGoToDashboard();
+  };
+
+  const handleFillAnother = () => {
+    setValues(defaultValues);
+    setComparisonStats(null);
+    setSavedSnapshot(null);
+    setStatus("idle");
+  };
+
+  if (status === "success" && comparisonStats && savedSnapshot) {
     return (
-      <Card className="border-teal-200 bg-teal-50">
-        <CardContent className="pt-6">
-          <div className="text-center space-y-4">
-            <div className="text-5xl">✓</div>
-            <h3 className="text-xl font-semibold text-teal-600">Dziękujemy za wypełnienie ankiety!</h3>
-            <p className="text-slate-600">Twoja odpowiedź została zapisana. Za chwilę zobaczysz zaktualizowane wyniki...</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-6 max-w-3xl mx-auto">
+        <Card className="border-teal-200 bg-teal-50">
+          <CardContent className="pt-6">
+            <div className="text-center space-y-2">
+              <div className="text-5xl">✓</div>
+              <h3 className="text-xl font-semibold text-teal-600">Dziękujemy za wypełnienie ankiety!</h3>
+              <p className="text-slate-600 text-sm">
+                Poniżej porównanie Twojej oceny ze średnią w gminie (wszystkie zapisane ankiety, łącznie z Twoją).
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-white shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-xl text-teal-600">Twoja ocena wobec średniej gminy</CardTitle>
+            <CardDescription className="text-slate-600">
+              Wykres radarowy: niebieski — Twoja ocena, turkusowy — średnia z ankiet dla tej gminy
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <SurveyComparisonChart
+              userScores={{
+                communication: savedSnapshot.communication,
+                resources: savedSnapshot.resources,
+                knowledge: savedSnapshot.knowledge,
+                socialCapital: savedSnapshot.socialCapital,
+                competencies: savedSnapshot.competencies,
+              }}
+              stats={comparisonStats}
+            />
+          </CardContent>
+        </Card>
+
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Button
+            onClick={handleGoToDashboard}
+            className="bg-blue-500 hover:bg-blue-400 text-white px-8 py-3 text-base rounded-xl"
+          >
+            Przejdź do Dashboardu
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleFillAnother}
+            className="border-slate-300 text-slate-700 px-8 py-3 text-base rounded-xl"
+          >
+            Wypełnij kolejną ankietę
+          </Button>
+        </div>
+      </div>
     );
   }
 
@@ -117,7 +181,7 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
             <div className="text-5xl">✗</div>
             <h3 className="text-xl font-semibold text-red-600">Błąd zapisu!</h3>
             <p className="text-slate-600">Nie udało się zapisać odpowiedzi. Sprawdź połączenie i spróbuj ponownie.</p>
-            <Button 
+            <Button
               onClick={() => setStatus("idle")}
               className="mt-4 bg-slate-500 hover:bg-slate-400 text-white"
             >
@@ -171,21 +235,21 @@ export function SurveyForm({ municipality, onSubmit }: SurveyFormProps) {
             </div>
           </div>
         ))}
-        
+
         <div className="pt-4 border-t border-slate-200">
-          <Button 
-            onClick={handleSubmit} 
+          <Button
+            onClick={handleSubmit}
             disabled={!isComplete || status === "submitting"}
             className={`w-full py-6 text-lg font-semibold rounded-xl ${
               isComplete && status !== "submitting"
-                ? "bg-teal-500 hover:bg-teal-400 text-white" 
+                ? "bg-teal-500 hover:bg-teal-400 text-white"
                 : "bg-slate-200 text-slate-400"
             }`}
           >
-            {status === "submitting" 
-              ? "Zapisywanie..." 
-              : isComplete 
-                ? "✓ Wyślij odpowiedź" 
+            {status === "submitting"
+              ? "Zapisywanie..."
+              : isComplete
+                ? "✓ Wyślij odpowiedź"
                 : "Odpowiedz na wszystkie pytania"}
           </Button>
         </div>

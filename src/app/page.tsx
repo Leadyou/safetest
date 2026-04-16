@@ -39,11 +39,15 @@ function HomeContent() {
     }
   }, [searchParams]);
 
-  const refreshStats = useCallback(async () => {
+  const refreshStats = useCallback(async (options?: { silent?: boolean }) => {
     if (!municipality) return;
-    
+
+    const silent = options?.silent === true;
+
     try {
-      setLoading(true);
+      if (!silent) {
+        setLoading(true);
+      }
       setError(null);
       const responses = await fetchSurveyResponses(municipality);
       const newStats = calculateStats(responses);
@@ -59,7 +63,9 @@ function HomeContent() {
         resilienceScore: 0,
       });
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, [municipality]);
 
@@ -81,10 +87,13 @@ function HomeContent() {
     window.history.replaceState({}, '', '/');
   };
 
-  const handleSurveySubmit = () => {
-    refreshStats();
+  const handleSurveySaved = useCallback(() => {
+    return refreshStats({ silent: true });
+  }, [refreshStats]);
+
+  const handleGoToDashboardFromSurvey = useCallback(() => {
     setView("dashboard");
-  };
+  }, []);
 
   if (!mounted) {
     return (
@@ -168,7 +177,7 @@ function HomeContent() {
               </Button>
               
               <Button
-                onClick={refreshStats}
+                onClick={() => void refreshStats()}
                 className="bg-blue-500 hover:bg-blue-400 text-white px-6 py-3 text-base rounded-xl"
               >
                 Odśwież
@@ -191,7 +200,11 @@ function HomeContent() {
 
         {view === "survey" ? (
           <div className="max-w-2xl mx-auto">
-            <SurveyForm municipality={municipality} onSubmit={handleSurveySubmit} />
+            <SurveyForm
+              municipality={municipality}
+              onSaved={handleSurveySaved}
+              onGoToDashboard={handleGoToDashboardFromSurvey}
+            />
           </div>
         ) : (
           <div className="space-y-8">
