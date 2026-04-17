@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 
 type DayRow = { date: string; count: number };
+type RecentRow = { name: string; municipality: string };
 
 export default function AdminAnkietyPage() {
   const [secret, setSecret] = useState("");
@@ -15,6 +16,7 @@ export default function AdminAnkietyPage() {
   const [error, setError] = useState<string | null>(null);
   const [days, setDays] = useState<DayRow[]>([]);
   const [total, setTotal] = useState<number | null>(null);
+  const [recent24h, setRecent24h] = useState<RecentRow[]>([]);
 
   const load = async () => {
     setLoading(true);
@@ -31,14 +33,17 @@ export default function AdminAnkietyPage() {
         setError(data.error || "Błąd");
         setDays([]);
         setTotal(null);
+        setRecent24h([]);
         return;
       }
       setDays(data.days || []);
       setTotal(data.total ?? 0);
+      setRecent24h(Array.isArray(data.recent24h) ? data.recent24h : []);
     } catch {
       setError("Błąd połączenia");
       setDays([]);
       setTotal(null);
+      setRecent24h([]);
     } finally {
       setLoading(false);
     }
@@ -46,7 +51,7 @@ export default function AdminAnkietyPage() {
 
   return (
     <main className="min-h-screen bg-slate-100 p-6">
-      <div className="max-w-2xl mx-auto space-y-6">
+      <div className="max-w-3xl mx-auto space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-slate-800">Ankiety wg dni (admin)</h1>
           <Link href="/" className="text-blue-600 hover:underline text-sm">
@@ -119,6 +124,41 @@ export default function AdminAnkietyPage() {
                         <tr key={d.date} className="border-b border-slate-100">
                           <td className="py-2 pr-4 font-mono">{d.date}</td>
                           <td className="py-2 font-semibold">{d.count}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {total !== null && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Nowe ankiety (ostatnie 24 godziny)</CardTitle>
+              <CardDescription>
+                Kolumna „Nazwa” to imię z ankiety (jeśli nie podano — „—”). Uwzględniony jest ten sam filtr gminy co powyżej.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {recent24h.length === 0 ? (
+                <p className="text-slate-500">Brak ankiet w ostatnich 24 godzinach.</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b text-left">
+                        <th className="py-2 pr-4">Nazwa</th>
+                        <th className="py-2">Gmina</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {recent24h.map((row, i) => (
+                        <tr key={`${row.municipality}-${row.name}-${i}`} className="border-b border-slate-100">
+                          <td className="py-2 pr-4">{row.name}</td>
+                          <td className="py-2 capitalize">{row.municipality}</td>
                         </tr>
                       ))}
                     </tbody>

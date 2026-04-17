@@ -75,10 +75,36 @@ export async function GET(request: NextRequest) {
       .map(([date, count]) => ({ date, count }))
       .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
 
+    const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    let recentQuery = supabase
+      .from("survey_responses")
+      .select("created_at, municipality, respondent_name")
+      .gte("created_at", since24h)
+      .order("created_at", { ascending: false });
+
+    if (municipality) {
+      recentQuery = recentQuery.eq("municipality", municipality);
+    }
+
+    const { data: recentRows, error: recentError } = await recentQuery;
+
+    let recent24h: { name: string; municipality: string }[] = [];
+    if (recentError) {
+      console.error("Supabase recent24h error:", recentError);
+    } else {
+      recent24h = (recentRows || []).map(
+        (row: { municipality: string; respondent_name?: string | null }) => ({
+          name: row.respondent_name?.trim() ? row.respondent_name.trim() : "—",
+          municipality: row.municipality || "—",
+        })
+      );
+    }
+
     return NextResponse.json({
       total: rows.length,
       municipality: municipality,
       days,
+      recent24h,
     });
   } catch (err) {
     console.error("API error:", err);
